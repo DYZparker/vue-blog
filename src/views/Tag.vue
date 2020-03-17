@@ -1,17 +1,8 @@
 <template>
   <div>
     <el-form ref="searchData" :inline="true" :model="searchData" class="demo-form-inline">
-      <el-form-item prop="username">
-        <el-input v-model="searchData.username" placeholder="账号"></el-input>
-      </el-form-item>
-      <el-form-item prop="admin">
-        <el-select v-model="searchData.admin" placeholder="权限">
-          <el-option v-for="option in searchOpts" 
-          :key="option.type"
-          :label="option.name"
-          :value="option.type"
-          ></el-option>
-        </el-select>
+      <el-form-item prop="title">
+        <el-input v-model="searchData.title" placeholder="标签"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSearch">查询</el-button>
@@ -21,17 +12,21 @@
     </el-form>
 
     <el-table
-      :data= this.$store.state.user.userList
+      :data= this.$store.state.common.tagList
       height="500"
       border
       style="width: 100%"
       :cell-style="cellStyle"
       :header-cell-style="rowClass">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
-      <el-table-column prop="username" label="账号" width="150"></el-table-column>
-      <el-table-column prop="password" label="密码" width="150"></el-table-column>
-      <el-table-column prop="admin" label="权限" width="150" :formatter="adminFormat"></el-table-column>
-      <el-table-column prop="date" label="注册时间" width="200" :formatter="dateFormat"></el-table-column>
+      <el-table-column prop="title" label="标签" width="150"></el-table-column>
+      <el-table-column prop="color" label="颜色" width="150">
+        <template slot-scope="scope">
+          <el-tag :color= scope.row.color effect="dark">
+            {{ scope.row.color }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="200">
         <template slot-scope="scope">
           <el-button
@@ -52,26 +47,17 @@
       :page-sizes="[10, 20, 50, 100]"
       :page-size="currentSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total= this.$store.state.user.total
+      :total= this.$store.state.common.total
       class="pagination">
     </el-pagination>
 
-    <el-dialog title="用户信息编辑" :visible.sync="dialogFormVisible" width="400px" center>
+    <el-dialog title="标签编辑" :visible.sync="dialogFormVisible" width="400px" center>
       <el-form :model="editData" :rules="rules" ref="ruleForm" label-width="80px" size="mini">
-        <el-form-item label="账号" prop="username">
-          <el-input v-model="editData.username"></el-input>
+        <el-form-item label="标签名称" prop="title">
+          <el-input v-model="editData.title"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="editData.password"></el-input>
-        </el-form-item>
-        <el-form-item label="权限" prop="admin">
-          <el-select v-model="editData.admin" placeholder="权限" style="width: 110px">
-              <el-option v-for="option in editOpts" 
-              :key="option.type"
-              :label="option.name"
-              :value="option.type"
-              ></el-option>
-          </el-select>
+        <el-form-item label="颜色选择" prop="color">
+          <el-color-picker v-model="editData.color"></el-color-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -83,43 +69,22 @@
 </template>
 
 <script>
-  import moment from 'moment'
-  const searchOpts = [
-    {type: 0, name: '普通用户'},
-    {type: 1, name: '管理员'}
-  ]
-  const editOpts = [
-    {type: 0, name: '普通用户'},
-    {type: 1, name: '管理员'}
-  ]
   export default {
     data() {
       return {
-        searchOpts,
-        editOpts,
         searchData: {
-          username: '',
-          admin: ''
+          title: ''
         },
-        totalList: null,
         currentPage: 1,
         currentSize: 10,
-        tableData: this.$store.state.user.userList,
         dialogFormVisible: false,
         editData: {
-          username: '',
-          password: '',
-          admin: ''
+          title: '',
+          color: ''
         },
         rules: {
-          username: [
-            { required: true, message: '请输入账号', trigger: 'blur' }
-          ],
-          password: [
-            { required: true, message: '请输入密码', trigger: 'blur' }
-          ],
-          admin: [
-            { required: true, message: '请选择权限', trigger: 'change' }
+          title: [
+            { required: true, message: '请输入标签名称', trigger: 'blur' }
           ]
         }
       }
@@ -138,7 +103,7 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            return this.$store.dispatch('EditUser', this.editData).then(response => {
+            return this.$store.dispatch('EditTag', this.editData).then(response => {
               const res = response.data
               //清空本次查询传入的_id
               this.editData._id = null
@@ -173,12 +138,12 @@
       },
 
       handleDelete(index, row) {
-        this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该标签, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$store.dispatch('DelUser', row._id).then(response => {
+          this.$store.dispatch('DelTag', row._id).then(response => {
             const res = response.data
             if(res.code === 200) {
               return (() => {
@@ -233,11 +198,7 @@
             delete searchData[key]
           }
         }
-        return this.$store.dispatch('GetUserList', {page: this.currentPage, size: this.currentSize, search: this.searchData}).then(response => {
-          const res = response.data
-          // this.tableData = res.student
-          // this.totalList = res.total
-        })
+        return this.$store.dispatch('GetTagList', {page: this.currentPage, size: this.currentSize, search: this.searchData})
       },
 
       handleSizeChange(val) {
@@ -249,24 +210,6 @@
         this.currentPage = val
         this.refreshList()
       },
-
-      adminFormat(row) {
-        const Admin = (row.admin === 1) ? '管理员' : '普通用户'
-        return Admin
-      },
-
-      dateFormat(row) {
-        const date = moment(row.date).format('YYYY-MM-DD HH:mm:ss')
-        return date
-      },
-
-      // cellStyle({row, column, rowIndex, columnIndex}) {
-      //   return "text-align:center"
-      // },
-
-      // rowClass({row, rowIndex}) {
-      //   return "text-align:center"
-      // }
 
       cellStyle() {
         return "text-align:center"
