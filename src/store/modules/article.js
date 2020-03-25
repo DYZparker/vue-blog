@@ -1,4 +1,4 @@
-import { getArticleListApi, editArticleApi, getArticleApi } from '@/api/article'
+import { getArticleListApi, editArticleApi, getArticleApi, delArticleApi } from '@/api/article'
 import { SET_ARTICLELIST } from '../mutation_types'
 
 const article = {
@@ -50,7 +50,7 @@ const article = {
       })
     },
 
-    GetArticle({commit}, payload) {
+    GetArticle(context, payload) {
       return new Promise((resolve, reject) => {
         getArticleApi(payload).then(response => {
           if(response.status === 200) {
@@ -80,33 +80,17 @@ const article = {
       })
     },
 
-//     EditTag(context, payload) {
-//       return new Promise((resolve, reject) => {
-//         editTagApi(payload).then(response => {
-//           // if(response.status === 200) {
-//           //     const res = response.data
-//           //     if(res.flag) {
-//           //       commit(SET_USERLIST, {userList: res})
-//           //     }
-//             resolve(response)
-//           // }
-//         }).catch(error => {
-//           reject(error)
-//         })
-//       })
-//     },
-
-//     DelTag(context, searchId) {
-//       return new Promise((resolve, reject) => {
-//         delTagApi(searchId).then(response => {
-//           // if(response.status === 200) {
-//               resolve(response)
-//           // }
-//         }).catch(error => {
-//           reject(error)
-//         })
-//       })
-//     },
+    DelArticle(context, searchId) {
+      return new Promise((resolve, reject) => {
+        delArticleApi(searchId).then(response => {
+          // if(response.status === 200) {
+              resolve(response)
+          // }
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
 
 //     GetTopicList({commit}, payload) {
 //       return new Promise((resolve, reject) => {

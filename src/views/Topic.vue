@@ -13,7 +13,6 @@
 
     <el-table
       :data= this.$store.state.common.topicList
-      height="500"
       border
       style="width: 100%"
       :cell-style="cellStyle"
@@ -56,6 +55,9 @@
 
     <el-dialog title="图片编辑" :visible.sync="dialogFormVisible" width="400px" center>
       <el-form :model="editData" :rules="rules" ref="ruleForm" label-width="80px" size="mini">
+        <el-form-item label="id" prop="_id" v-show="false">
+          <el-input v-model="editData._id"></el-input>
+        </el-form-item>
         <el-form-item label="图片名称" prop="alt">
           <el-input v-model="editData.alt"></el-input>
         </el-form-item>
@@ -82,8 +84,9 @@
         currentSize: 10,
         dialogFormVisible: false,
         editData: {
-          alt: '',
-          src: ''
+          _id: null,
+          alt: null,
+          src: null
         },
         rules: {
           alt: [
@@ -99,7 +102,7 @@
     methods: {
       handleAdd() {
         this.dialogFormVisible = true
-        Object.values(this.editData).forEach( item => item = '')
+        // Object.values(this.editData).forEach( item => item = '')
         this.$nextTick(() => {
           this.$refs['ruleForm'].resetFields()
         })

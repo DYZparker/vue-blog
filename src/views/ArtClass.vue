@@ -13,7 +13,7 @@
     <div class="tag-group">
       <span class="tag-group__title">标签分类：</span>
       <el-tag
-        class="tag-group__tag"
+        class="tag-group-tag"
         v-for="item in this.$store.state.common.tagList"
         :key="item.title"
         :color="item.color"
@@ -25,7 +25,6 @@
 
     <el-table
       :data= this.$store.state.article.articleList
-      height="500"
       border
       style="width: 100%"
       :cell-style="cellStyle"
@@ -70,17 +69,12 @@
           title: ''
         },
         currentPage: 1,
-        currentSize: 10,
-        // dialogFormVisible: false,
+        currentSize: 10
       }
     },
     
     methods: {
       handleEdit(index, row) {
-        // this.dialogFormVisible = true
-        // this.$nextTick(() => {
-        //   this.editData = JSON.parse(JSON.stringify(row))
-        // })
         this.$router.push('/article/edit/' + row._id)
       },
 
@@ -90,7 +84,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$store.dispatch('DelUser', row._id).then(response => {
+          this.$store.dispatch('DelArticle', row._id).then(response => {
             const res = response.data
             if(res.code === 200) {
               return (() => {
@@ -195,7 +189,7 @@
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  .tag-group__tag {
+  .tag-group-tag {
     margin-right: 10px;
     cursor: pointer;
     &:hover {

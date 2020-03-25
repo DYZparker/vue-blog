@@ -1,15 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// import Login from '../views/login/index'
-// import Layout from '../components/Layout'
-// import Home from '../views/Home'
-// import Manage from '../views/Manage'
-// import Topic from '../views/Topic'
-// import Tag from '../views/Tag'
-// import Article from '../views/Article'
-// import ArtClass from '../views/ArtClass'
-// import ArtEdit from '../views/ArtEdit'
-// import User from '../views/User'
+import { getToken, removeUser } from '@/utils/auth'
+import { getUserInfoApi} from '@/api/login'
+
 const Layout = () => import('../components/Layout')
 const Home = () => import('../views/Home')
 const Manage = () => import('../views/Manage')
@@ -19,6 +12,8 @@ const Article = () => import('../views/Article')
 const ArtClass = () => import('../views/ArtClass')
 const ArtEdit = () => import('../views/ArtEdit')
 const User = () => import('../views/User')
+const Login = () => import('../views/Login')
+
 
 Vue.use(VueRouter)
 
@@ -26,7 +21,7 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    // component: Login
+    component: Login
   },
   {
     path: '/',
@@ -85,6 +80,14 @@ const routes = [
             }
           },
           {
+            path: 'edit',
+            component: ArtEdit,
+            meta: {
+              title: '写文章',
+              requiresAuth: true
+            }
+          },
+          {
             path: 'edit/:id',
             component: ArtEdit,
             meta: {
@@ -110,6 +113,32 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+//导航守卫检测token
+router.beforeEach((to, from, next) => {
+  let token = getToken()
+  if(token) {
+    getUserInfoApi().then(response => {
+      const res = response.data
+      if(res.code === 2000) {
+        return next()
+      }else {
+        if(to.path === '/login') {
+          removeUser() 
+          next()
+        }else {
+          next('/login')
+        }
+      }
+    })
+  }else {
+    if(to.path === '/login') {
+      next()
+    }else {
+      next('/login')
+    }
+  }
 })
 
 export default router

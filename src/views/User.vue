@@ -58,6 +58,9 @@
 
     <el-dialog title="用户信息编辑" :visible.sync="dialogFormVisible" width="400px" center>
       <el-form :model="editData" :rules="rules" ref="ruleForm" label-width="80px" size="mini">
+        <el-form-item label="id" prop="_id" v-show="false">
+          <el-input v-model="editData._id"></el-input>
+        </el-form-item>
         <el-form-item label="账号" prop="username">
           <el-input v-model="editData.username"></el-input>
         </el-form-item>
@@ -107,9 +110,10 @@
         tableData: this.$store.state.user.userList,
         dialogFormVisible: false,
         editData: {
-          username: '',
-          password: '',
-          admin: ''
+          _id: null,
+          username: null,
+          password: null,
+          admin: null
         },
         rules: {
           username: [
@@ -128,7 +132,6 @@
     methods: {
       handleAdd() {
         this.dialogFormVisible = true
-        Object.values(this.editData).forEach( item => item = '')
         this.$nextTick(() => {
           this.$refs['ruleForm'].resetFields()
         })
@@ -233,11 +236,7 @@
             delete searchData[key]
           }
         }
-        return this.$store.dispatch('GetUserList', {page: this.currentPage, size: this.currentSize, search: this.searchData}).then(response => {
-          const res = response.data
-          // this.tableData = res.student
-          // this.totalList = res.total
-        })
+        return this.$store.dispatch('GetUserList', {page: this.currentPage, size: this.currentSize, search: this.searchData})
       },
 
       handleSizeChange(val) {

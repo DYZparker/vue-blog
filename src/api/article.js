@@ -22,10 +22,20 @@ export function getArticleApi(id) {
 
 export function editArticleApi(article) {
   return request({
-    url: '/article/edit',
+    url: `/article/edit`,
     method: 'post',
     data: {
       article
+    }
+  })
+}
+
+export function delArticleApi(searchId) {
+  return request({
+    url: `/article/delete`,
+    method: 'post',
+    data: {
+        searchId
     }
   })
 }

@@ -1,7 +1,7 @@
 <template>
   <el-menu
-    router
-    default-active="/home"
+    :router="aaa"
+    :default-active="activemenu"
     class="el-menu-vertical-demo"
     background-color="#545c64"
     text-color="#fff"
@@ -24,7 +24,7 @@
         <span>文章管理</span>
       </template>
         <el-menu-item index="/article/class">文章分类</el-menu-item>
-        <el-menu-item index="/article/edit">文章编辑</el-menu-item>
+        <el-menu-item index="/article/edit">写文章</el-menu-item>
     </el-submenu>
     <el-menu-item index="/user">
       <i class="el-icon-s-custom"></i>
@@ -35,13 +35,10 @@
 
 <script>
 export default {
-  name: 'HelloWorld',
-  methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
+  data() {
+    return {
+      activemenu: this.$route.path,
+      aaa: true
     }
   }
 }

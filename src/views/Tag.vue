@@ -13,7 +13,6 @@
 
     <el-table
       :data= this.$store.state.common.tagList
-      height="500"
       border
       style="width: 100%"
       :cell-style="cellStyle"
@@ -53,6 +52,9 @@
 
     <el-dialog title="标签编辑" :visible.sync="dialogFormVisible" width="400px" center>
       <el-form :model="editData" :rules="rules" ref="ruleForm" label-width="80px" size="mini">
+        <el-form-item label="id" prop="_id" v-show="false">
+          <el-input v-model="editData._id"></el-input>
+        </el-form-item>
         <el-form-item label="标签名称" prop="title">
           <el-input v-model="editData.title"></el-input>
         </el-form-item>
@@ -79,8 +81,9 @@
         currentSize: 10,
         dialogFormVisible: false,
         editData: {
-          title: '',
-          color: ''
+          _id: null,
+          title: null,
+          color: null
         },
         rules: {
           title: [
@@ -93,7 +96,7 @@
     methods: {
       handleAdd() {
         this.dialogFormVisible = true
-        Object.values(this.editData).forEach( item => item = '')
+        // Object.values(this.editData).forEach( item => item = '')
         this.$nextTick(() => {
           this.$refs['ruleForm'].resetFields()
         })
