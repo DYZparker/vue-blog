@@ -13,7 +13,6 @@ request.interceptors.request.use(request => {
   if(token) {
     request.headers.common['Authorization'] = 'Bearer ' + token
   }
-  
   return request
 })
 

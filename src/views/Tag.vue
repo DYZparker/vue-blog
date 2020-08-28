@@ -1,15 +1,10 @@
 <template>
   <div>
-    <el-form ref="searchData" :inline="true" :model="searchData" class="demo-form-inline">
-      <el-form-item prop="title">
-        <el-input v-model="searchData.title" placeholder="标签"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSearch">查询</el-button>
+    <Inquiry-bar :searchData="searchData" searchProp="title" placeholderName="标签" @refresh="refreshList">
+      <template v-slot:button>
         <el-button type="primary" @click="handleAdd">新增</el-button>
-        <el-button @click="onReset()">重置</el-button>
-      </el-form-item>
-    </el-form>
+      </template>
+    </Inquiry-bar>
 
     <el-table
       :data= this.$store.state.common.tagList
@@ -18,8 +13,8 @@
       :cell-style="cellStyle"
       :header-cell-style="rowClass">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
-      <el-table-column prop="title" label="标签" width="150"></el-table-column>
-      <el-table-column prop="color" label="颜色" width="150">
+      <el-table-column prop="title" label="标签" min-width="150"></el-table-column>
+      <el-table-column prop="color" label="颜色" min-width="150">
         <template slot-scope="scope">
           <el-tag :color= scope.row.color effect="dark">
             {{ scope.row.color }}
@@ -28,13 +23,8 @@
       </el-table-column>
       <el-table-column label="操作" width="200">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -50,158 +40,96 @@
       class="pagination">
     </el-pagination>
 
-    <el-dialog title="标签编辑" :visible.sync="dialogFormVisible" width="400px" center>
-      <el-form :model="editData" :rules="rules" ref="ruleForm" label-width="80px" size="mini">
-        <el-form-item label="id" prop="_id" v-show="false">
-          <el-input v-model="editData._id"></el-input>
-        </el-form-item>
-        <el-form-item label="标签名称" prop="title">
-          <el-input v-model="editData.title"></el-input>
-        </el-form-item>
-        <el-form-item label="颜色选择" prop="color">
-          <el-color-picker v-model="editData.color"></el-color-picker>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
-      </div>
-    </el-dialog>
+    <Dialog-edit 
+      :dialogData="dialogData"
+      @refresh="refreshList"
+      @visible="handleVisible"
+    >
+      <template v-slot:default="slotProps">
+        <el-color-picker v-model="slotProps.editData.color"></el-color-picker>
+      </template>
+    </Dialog-edit>
   </div>
 </template>
 
 <script>
+  import InquiryBar from '../components/common/InquiryBar'
+  import DialogEdit from '../components/common/DialogEdit'
+  import { rowDelete } from '../utils/commen'
   export default {
     data() {
       return {
-        searchData: {
-          title: ''
-        },
+        searchData: {},
         currentPage: 1,
         currentSize: 10,
-        dialogFormVisible: false,
-        editData: {
-          _id: null,
-          title: null,
-          color: null
-        },
-        rules: {
-          title: [
-            { required: true, message: '请输入标签名称', trigger: 'blur' }
-          ]
+        dialogData: {
+          title: '标签编辑',
+          dialogFormVisible: false,
+          propsData: [
+            {
+              label: '标签名称',
+              name: 'title',
+              hasSlot: false
+            },
+            {
+              label: '颜色选择',
+              name: 'color',
+              hasSlot: true
+            }
+          ],
+          editData: {
+            _id: null,
+            title: null,
+            color: null
+          },
+          rules: {
+            title: [
+              { required: true, message: '请输入标签名称', trigger: 'blur' }
+            ]
+          },
+          ref: 'ruleForm',
+          dispatchName: 'EditTag'
         }
       }
     },
+
+    components: { InquiryBar, DialogEdit },
     
     methods: {
-      handleAdd() {
-        this.dialogFormVisible = true
-        // Object.values(this.editData).forEach( item => item = '')
-        this.$nextTick(() => {
-          this.$refs['ruleForm'].resetFields()
-        })
+      handleVisible(toggle) {
+        this.dialogData.dialogFormVisible = toggle
       },
 
-      //将增加数据和修改数据合并到一个API，后端判断有_id就是更新，没有就添加
-      submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            return this.$store.dispatch('EditTag', this.editData).then(response => {
-              const res = response.data
-              //清空本次查询传入的_id
-              this.editData._id = null
-              if(res.code === 200){
-                return (() => {
-                  this.$message({
-                    message: res.data.message,
-                    type: 'success'
-                  })
-                  this.refreshList()
-                  this.dialogFormVisible = false
-                })()
-              }
-              this.$message({
-                message: '编辑失败',
-                type: 'warning'
-              })
-            }).catch(error => {
-              console.log(error)
-            })
-          } else {
-            return false;
-          }
+      handleAdd() {
+        this.dialogData.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.dialogData.editData = {}
         })
       },
 
       handleEdit(index, row) {
-        this.dialogFormVisible = true
+        this.dialogData.dialogFormVisible = true
         this.$nextTick(() => {
-          this.editData = JSON.parse(JSON.stringify(row))
+          this.dialogData.editData = JSON.parse(JSON.stringify(row))
         })
       },
-
+      
       handleDelete(index, row) {
-        this.$confirm('此操作将永久删除该标签, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$store.dispatch('DelTag', row._id).then(response => {
-            const res = response.data
-            if(res.code === 200) {
-              return (() => {
-                this.$message({
-                  message: res.data.message,
-                  type: 'success'
-                })
-                this.refreshList()
-              })()
-            }
-            this.$message({
-              message: res.message,
-              type: 'warning'
-            })
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
-        });
-
+        const that = this
+        const dispatchName = 'DelTag'
+        const payload = row._id
+        rowDelete(dispatchName, payload, that)
       },
 
-      onSearch() {
-        // 检查查询条件是否都为空
-        const search = JSON.parse(JSON.stringify(this.searchData))
-        const blank = Object.values(search).some( item => item.toString().trim().length !== 0 ? true : false)
-        if(!blank) {
-          return this.$message({
-              message: '请填写查询条件',
-              type: 'warning'
-          }); 
-        }
-        this.refreshList()
-      },
-
-      onReset() {
-        // 重置 = 先清空查询条件，再查询列表
-        this.$refs['searchData'].resetFields() //element-ui的reset会把值改为undefind
-        for(const key in this.searchData) {
-          this.searchData[key] = ''
-        }
-        this.refreshList()
-      },
-
-      refreshList() {
-        const searchData = this.searchData
+      refreshList(data) {
+        const searchData =  data || {}
         //过滤空的查询对象
         for(const key in searchData) {
           if (searchData[key] === '') {
             delete searchData[key]
           }
         }
-        return this.$store.dispatch('GetTagList', {page: this.currentPage, size: this.currentSize, search: this.searchData})
+        return this.$store.dispatch('GetTagList', {page: this.currentPage, size: this.currentSize, search: searchData})
       },
 
       handleSizeChange(val) {
@@ -230,11 +158,6 @@
 </script>
 
 <style lang="scss" scope>
-.demo-form-inline {
-  padding: 20px 20px 0 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-}
 .pagination {
   margin-top: 10px;
   text-align: center;

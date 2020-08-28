@@ -8,6 +8,7 @@ const Home = () => import('../views/Home')
 const Manage = () => import('../views/Manage')
 const Topic = () => import('../views/Topic')
 const Tag = () => import('../views/Tag')
+const Link = () => import('../views/Link')
 const Article = () => import('../views/Article')
 const ArtClass = () => import('../views/ArtClass')
 const ArtEdit = () => import('../views/ArtEdit')
@@ -61,6 +62,14 @@ const routes = [
               requiresAuth: true
             }
           },
+          {
+            path: 'link',
+            component: Link,
+            meta: {
+              title: '链接管理',
+              requiresAuth: true
+            }
+          }
         ]
       },
       {

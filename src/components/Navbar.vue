@@ -17,6 +17,7 @@
       </template>
         <el-menu-item index="/manage/topic">轮播图</el-menu-item>
         <el-menu-item index="/manage/tag">标签管理</el-menu-item>
+        <el-menu-item index="/manage/link">链接管理</el-menu-item>
     </el-submenu>
     <el-submenu index="/article">
       <template slot="title">

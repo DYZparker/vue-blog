@@ -1,14 +1,6 @@
 <template>
   <div>
-    <el-form ref="searchData" :inline="true" :model="searchData" class="demo-form-inline">
-      <el-form-item prop="title">
-        <el-input v-model="searchData.title" placeholder="标题"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSearch">查询</el-button>
-        <el-button @click="onReset()">重置</el-button>
-      </el-form-item>
-    </el-form>
+    <Inquiry-bar :searchData="searchData" searchProp="title" placeholderName="标题" @refresh="refreshList"></Inquiry-bar>
 
     <div class="tag-group">
       <span class="tag-group__title">标签分类：</span>
@@ -30,11 +22,11 @@
       :cell-style="cellStyle"
       :header-cell-style="rowClass">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
-      <el-table-column prop="title" label="标题" width="300"></el-table-column>
-      <el-table-column prop="tags" label="标签" width="200"></el-table-column>
-      <el-table-column prop="img" label="封面图片" width="300"></el-table-column>
-      <el-table-column prop="date" label="发布时间" width="200" :formatter="dateFormat"></el-table-column>
-      <el-table-column label="操作">
+      <el-table-column prop="title" label="标题" min-width="300"></el-table-column>
+      <el-table-column prop="tags" label="标签" min-width="200"></el-table-column>
+      <el-table-column prop="img" label="封面图片" min-width="400"></el-table-column>
+      <el-table-column prop="date" label="发布时间" min-width="200" :formatter="dateFormat"></el-table-column>
+      <el-table-column label="操作" width="200">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -62,16 +54,17 @@
 
 <script>
   import moment from 'moment'
+  import InquiryBar from '../components/common/InquiryBar'
   export default {
     data() {
       return {
-        searchData: {
-          title: ''
-        },
+        searchData: {},
         currentPage: 1,
         currentSize: 10
       }
     },
+
+    components: {InquiryBar},
     
     methods: {
       handleEdit(index, row) {
@@ -104,41 +97,16 @@
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });          
-        });
-
-      },
-
-      onSearch() {
-        // 检查查询条件是否都为空
-        const search = JSON.parse(JSON.stringify(this.searchData))
-        const blank = Object.values(search).some( item => item.toString().trim().length !== 0 ? true : false)
-        if(!blank) {
-          return this.$message({
-              message: '请填写查询条件',
-              type: 'warning'
-          }); 
-        }
-        this.$store.dispatch('GetArticleList', {page: this.currentPage, size: this.currentSize, search: this.searchData})
-      },
-
-      onReset() {
-        // 重置 = 先清空查询条件，再查询列表
-        this.$refs['searchData'].resetFields() //element-ui的reset会把值改为undefind
-        for(const key in this.searchData) {
-          this.searchData[key] = ''
-        }
-        this.refreshList()
+          })
+        })
       },
 
       onClickTag(tag) {
         this.$store.dispatch('GetArticleList', {page: this.currentPage, size: this.currentSize, search: {tags: tag}})
-        // console.log(tag)
-        // this.refreshList()
       },
 
-      refreshList() {
-        const searchData = this.searchData
+      refreshList(data) {
+        const searchData = data || {}
         //过滤空的查询对象
         for(const key in searchData) {
           if (searchData[key] === '') {
@@ -146,7 +114,11 @@
           }
         }
         this.$store.dispatch('GetTagList')
-        this.$store.dispatch('GetArticleList', {page: this.currentPage, size: this.currentSize, search: this.searchData})
+        this.$store.dispatch('GetArticleList', {page: this.currentPage, size: this.currentSize, search: searchData})
+      },
+
+      refreshListtt(data) {
+        console.log('收到了', data)
       },
 
       handleSizeChange(val) {
@@ -180,11 +152,6 @@
 </script>
 
 <style lang="scss" scope>
-.demo-form-inline {
-  padding: 20px 20px 0 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-}
 .tag-group {
   padding: 20px;
   margin-bottom: 20px;

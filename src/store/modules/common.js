@@ -1,99 +1,39 @@
-import { getTagListApi, editTagApi, delTagApi, getTopicListApi, editTopicApi, delTopicApi } from '@/api/common'
-import { SET_ALLTAGLIST, SET_TAGLIST, SET_TOPICLIST } from '../mutation_types'
+import * as Api from '@/api/common'
+import { SET_ALLTAGLIST, SET_TOPICLIST, SET_TAGLIST, SET_LINKLIST } from '../mutation_types'
 
 const common = {
   state: {
     total: null,
     topicList: [],
-    // allTagList: [],
-    tagList: []
+    tagList: [],
+    linkList: []
   },
 
   mutations: {
     [SET_ALLTAGLIST](state, data) {
         state.allTagList = data.allTagList
     },
+    [SET_TOPICLIST](state, data) {
+        state.topicList = data.topicList
+        state.total = data.total
+    },
     [SET_TAGLIST](state, data) {
         state.tagList = data.tagList
         state.total = data.total
     },
-    [SET_TOPICLIST](state, data) {
-        state.topicList = data.topicList
-        state.total = data.total
-    }
+    [SET_LINKLIST](state, data) {
+        state.linkList = data.linkList
+    },
   },
 
   actions: {
-
-    // GetAllTagList({commit}) {
-    //   return new Promise((resolve, reject) => {
-    //     getAllTagListApi().then(response => {
-    //       if(response.status === 200) {
-    //         const res = response.data
-    //         // if(res.flag) {
-    //             commit(SET_ALLTAGLIST, {allTagList: res})
-    //         // }
-    //         // resolve(response)
-    //       }
-    //     }).catch(error => {
-    //       reject(error)
-    //     })
-    //   })
-    // },
-
-    GetTagList({commit}, payload) {
-      return new Promise((resolve, reject) => {
-        getTagListApi(payload).then(response => {
-          if(response.status === 200) {
-            const res = response.data.data
-            // if(res.flag) {
-                commit(SET_TAGLIST, {tagList: res.tagList, total: res.total})
-            // }
-            // resolve(response)
-          }
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
-
-    EditTag(context, payload) {
-      return new Promise((resolve, reject) => {
-        editTagApi(payload).then(response => {
-          // if(response.status === 200) {
-          //     const res = response.data
-          //     if(res.flag) {
-          //       commit(SET_USERLIST, {userList: res})
-          //     }
-            resolve(response)
-          // }
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
-
-    DelTag(context, searchId) {
-      return new Promise((resolve, reject) => {
-        delTagApi(searchId).then(response => {
-          // if(response.status === 200) {
-              resolve(response)
-          // }
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
-
+    //topic
     GetTopicList({commit}, payload) {
       return new Promise((resolve, reject) => {
-        getTopicListApi(payload).then(response => {
+        Api.getTopicListApi(payload).then(response => {
           if(response.status === 200) {
             const res = response.data.data
-            // if(res.flag) {
-                commit(SET_TOPICLIST, {topicList: res.topicList, total: res.total})
-            // }
-            // resolve(response)
+            commit(SET_TOPICLIST, {topicList: res.topicList, total: res.total})
           }
         }).catch(error => {
           reject(error)
@@ -104,14 +44,8 @@ const common = {
 
     EditTopic(context, payload) {
       return new Promise((resolve, reject) => {
-        editTopicApi(payload).then(response => {
-          // if(response.status === 200) {
-          //     const res = response.data
-          //     if(res.flag) {
-          //       commit(SET_USERLIST, {userList: res})
-          //     }
-            resolve(response)
-          // }
+        Api.editTopicApi(payload).then(response => {
+          resolve(response)
         }).catch(error => {
           reject(error)
         })
@@ -120,15 +54,82 @@ const common = {
 
     DelTopic(context, searchId) {
       return new Promise((resolve, reject) => {
-        delTopicApi(searchId).then(response => {
-          // if(response.status === 200) {
-              resolve(response)
-          // }
+        Api.delTopicApi(searchId).then(response => {
+          resolve(response)
         }).catch(error => {
           reject(error)
         })
       })
     },
+
+    //tag
+    GetTagList({commit}, payload) {
+      return new Promise((resolve, reject) => {
+        Api.getTagListApi(payload).then(response => {
+          if(response.status === 200) {
+            const res = response.data.data
+            commit(SET_TAGLIST, {tagList: res.tagList, total: res.total})
+          }
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    EditTag(context, payload) {
+      return new Promise((resolve, reject) => {
+        Api.editTagApi(payload).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    DelTag(context, searchId) {
+      return new Promise((resolve, reject) => {
+        Api.delTagApi(searchId).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    //link
+    GetLinkList({commit}) {
+      return new Promise((resolve, reject) => {
+        Api.getLinkListApi().then(response => {
+          if(response.status === 200) {
+            const res = response.data.data
+            commit(SET_LINKLIST, {linkList: res.linkList})
+          }
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    EditLink(context, payload) {
+      return new Promise((resolve, reject) => {
+        Api.editLinkApi(payload).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    DelLink(context, searchId) {
+      return new Promise((resolve, reject) => {
+        Api.delLinkApi(searchId).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    }
 
   }
 }

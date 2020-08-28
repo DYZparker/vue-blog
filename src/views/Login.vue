@@ -24,8 +24,9 @@
           username: '',
           password: ''
         }
-      };
+      }
     },
+
     methods: {
       submitForm() {
         this.$store.dispatch('Login', this.formData).then(response => {
@@ -53,9 +54,10 @@
           this.$message({
             type: 'info',
             message: '网络错误'
-          });          
+          })
         })
       },
+
       resetForm(formName) {
         this.$refs[formName].resetFields();
       }
@@ -68,7 +70,7 @@
   position: absolute;
   width: 100%;
   height: 100%;
-  background-image: url(http://122.51.57.99:7777/image/1.png);
+  background-image: url(http://122.51.57.99:7777/image/bg.jpg);
   background-size: 100% 100%;
   .demo-ruleForm {
     width: 350px;

@@ -32,13 +32,6 @@ export function editTopicApi(topic) {
 }
 
 //tag
-// export function getAllTagListApi() {
-//   return request({
-//     url: `/side/tag/list`,
-//     method: 'get'
-//   })
-// }
-
 export function getTagListApi(payload) {
   return request({
     url: `/side/tag/list`,
@@ -65,6 +58,34 @@ export function editTagApi(tag) {
     method: 'post',
     data: {
       tag
+    }
+  })
+}
+
+//link 
+export function getLinkListApi() {
+  return request({
+    url: `/side/link/list`,
+    method: 'get'
+  })
+}
+
+export function delLinkApi(searchId) {
+  return request({
+    url: `/side/link/delete`,
+    method: 'post',
+    data: {
+      searchId
+    }
+  })
+}
+
+export function editLinkApi(link) {
+  return request({
+    url: `/side/link/edit`,
+    method: 'post',
+    data: {
+      link
     }
   })
 }
