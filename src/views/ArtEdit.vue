@@ -67,7 +67,7 @@ export default {
         if(res.code === 200) {
           return (() => {
             this.$message({
-              message: res.data.message,
+              message: res.message,
               type: 'success'
             })
           })()
@@ -85,12 +85,13 @@ export default {
       this.$store.dispatch('GetTagList')
       if(id) {
         this.$store.dispatch('GetArticle', this.$route.params.id).then(response => {
-          this.form.id = response._id,
-          this.form.title = response.title,
-          this.form.img = response.img,
-          this.form.summary = response.summary,
-          this.form.content = response.content,
-          this.form.tags = response.tags
+          const res = response.data.article
+          this.form.id = res._id,
+          this.form.title = res.title,
+          this.form.img = res.img,
+          this.form.summary = res.summary,
+          this.form.content = res.content,
+          this.form.tags = res.tags
         })
       }
     }

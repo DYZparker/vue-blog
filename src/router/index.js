@@ -129,7 +129,7 @@ router.beforeEach((to, from, next) => {
   let token = getToken()
   if(token) {
     getUserInfoApi().then(response => {
-      const res = response.data
+      const res = response.data.data.res
       if(res.code === 2000) {
         return next()
       }else {

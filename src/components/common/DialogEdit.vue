@@ -53,7 +53,7 @@ export default {
             if(res.code === 200){
               return (() => {
                 this.$message({
-                  message: res.data.message,
+                  message: res.message,
                   type: 'success'
                 })
                 this.$emit("refresh")

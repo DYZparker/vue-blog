@@ -14,12 +14,12 @@
       :header-cell-style="rowClass">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
       <el-table-column prop="alt" label="名称" min-width="150"></el-table-column>
-      <el-table-column prop="href" label="跳转链接" min-width="300"></el-table-column>
+      <el-table-column prop="href" label="跳转链接" min-width="150"></el-table-column>
       <el-table-column prop="src" label="图片地址" min-width="300"></el-table-column>
-      <el-table-column prop="src" label="图片预览" min-width="500">
+      <el-table-column prop="src" label="图片预览" min-width="300">
         <template slot-scope="scope">
           <el-image
-            style="width: 480px; height: 140px"
+            style="width: 100%"
             :src= scope.row.src
             :fit= scope.row.alt>
           </el-image>

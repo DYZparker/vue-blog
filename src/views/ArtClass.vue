@@ -22,9 +22,9 @@
       :cell-style="cellStyle"
       :header-cell-style="rowClass">
       <el-table-column type="index" label="序号" width="100"></el-table-column>
-      <el-table-column prop="title" label="标题" min-width="300"></el-table-column>
-      <el-table-column prop="tags" label="标签" min-width="200"></el-table-column>
-      <el-table-column prop="img" label="封面图片" min-width="400"></el-table-column>
+      <el-table-column prop="title" label="标题" min-width="250"></el-table-column>
+      <el-table-column prop="tags" label="标签" min-width="200" :formatter="tagsFormat"></el-table-column>
+      <el-table-column prop="img" label="封面图片" min-width="300"></el-table-column>
       <el-table-column prop="date" label="发布时间" min-width="200" :formatter="dateFormat"></el-table-column>
       <el-table-column label="操作" width="200">
         <template slot-scope="scope">
@@ -82,7 +82,7 @@
             if(res.code === 200) {
               return (() => {
                 this.$message({
-                  message: res.data.message,
+                  message: res.message,
                   type: 'success'
                 })
                 this.refreshList()
@@ -129,6 +129,11 @@
       handleCurrentChange(val) {
         this.currentPage = val
         this.refreshList()
+      },
+
+      tagsFormat(row) {
+        const tags = row.tags.join('、')
+        return tags
       },
 
       dateFormat(row) {

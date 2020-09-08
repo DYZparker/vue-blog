@@ -34,7 +34,7 @@
             return (() => {
               if(response.data.user.admin === 1) {
                 this.$message({
-                  message: response.data.message,
+                  message: response.message,
                   type: 'success'
                 })
                 this.$router.push('/home')
@@ -47,7 +47,7 @@
             })()
           }
           this.$message({
-            message: response.data.message,
+            message: response.message,
             type: 'warning'
           })
         }).catch(() => {

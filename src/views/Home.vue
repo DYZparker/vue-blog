@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div class="blog-but"><el-button type="primary">前往博客首页</el-button></div>
+    <div class="blog-but"><el-button type="primary" @click="goto">前往博客首页</el-button></div>
     <div class="blog-content">
       <el-carousel class="blog-banner">
         <el-carousel-item v-for="item in 4" :key="item">
@@ -12,6 +12,13 @@
 </template>
 
 <script>
+export default {
+  methods: {
+    goto() {
+      window.open("http://dengyunzhong.com/", "_blank")
+    }
+  }
+}
 </script>
 
 <style lang="scss" scope>

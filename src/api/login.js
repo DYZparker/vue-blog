@@ -10,17 +10,6 @@ export function loginApi (user){
 	})
 }
 
-export function registApi(username, password) {
-	return request({
-		url: '/regist',
-		method: 'post',
-		data: {
-			username,
-			password
-		}
-	})
-}
-
 export function getUserInfoApi (){
 	return request({
 		url: '/user/info',

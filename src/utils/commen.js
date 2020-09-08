@@ -10,7 +10,7 @@ export const rowDelete =  function (dispatchName, payload, that) {
       if(res.code === 200) {
         return (() => {
           that.$message({
-            message: res.data.message,
+            message: res.message,
             type: 'success'
           })
           that.refreshList()

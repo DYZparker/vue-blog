@@ -31,10 +31,10 @@
             :cell-style="cellStyle"
             :header-cell-style="rowClass">
             <el-table-column type="index" label="序号" width="100"></el-table-column>
-            <el-table-column prop="title" label="网站名称" min-width="150"></el-table-column>
+            <el-table-column prop="title" label="网站名称" min-width="100"></el-table-column>
             <el-table-column prop="href" label="网站地址" min-width="150"></el-table-column>
             <el-table-column prop="src" label="icon地址" min-width="150"></el-table-column>
-            <el-table-column prop="src" label="icon预览" min-width="150">
+            <el-table-column prop="src" label="icon预览" min-width="50">
               <template slot-scope="scope">
                 <el-image
                   style="width: 50px; height: 50px"
@@ -166,7 +166,7 @@
               if(res.code === 200){
                 return (() => {
                   this.$message({
-                    message: res.data.message,
+                    message: res.message,
                     type: 'success'
                   })
                   this.refreshList()
@@ -200,7 +200,7 @@
             if(res.code === 200) {
               return (() => {
                 this.$message({
-                  message: res.data.message,
+                  message: res.message,
                   type: 'success'
                 })
                 //删除后默认当前打开标签页为第一个
@@ -245,7 +245,7 @@
             if(res.code === 200) {
               return (() => {
                 this.$message({
-                  message: res.data.message,
+                  message: res.message,
                   type: 'success'
                 })
                 this.refreshList()

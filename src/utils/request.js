@@ -1,8 +1,10 @@
 import axios from 'axios'
 import { getToken } from './auth'
 
+const requestBaseURL = process.env.VUE_APP_MODE === "development" ? '' : '/pro-api'
+
 const request = axios.create({
-  // baseURL: process.env.VUE_APP_BASE_API,
+  baseURL: requestBaseURL,
   timeout: 5000
 })
 
